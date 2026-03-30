@@ -1,91 +1,116 @@
-
+# ------------------ BIBLIOTECA ------------------
+# Biblioteca en memoria: diccionario con secciones y listas de libros
 biblioteca = {
-    "accion": [
-        {"titulo": "rapidos y furioso 1", "director": "rob cohen", "año": 2001 },
-        {"titulo": "jhon wick", "director": "chad stahelski", "año":2014 }
+    "Ficción": [
+        {"titulo": "Cien años de soledad", "autor": "Gabriel García Márquez", "anio": 1967},
+        {"titulo": "1984", "autor": "George Orwell", "anio": 1949}
     ],
-    "ciencia ficcion": [
-        {"titulo": "mad max fury road", "director": "george miller", "año": 2015 },
-        {"titulo": "intelestellar", "director": "christopher nolan", "año": 2014 }
+    "Ciencia": [
+        {"titulo": "Breve historia del tiempo", "autor": "Stephen Hawking", "anio": 1988}
     ],
-    "amor": [
-        {"titulo": "como perder a un hombre en 10 dias", "director": "donald peterson", "año": 2003 },
-        {"titulo": "la propuesta", "director": "anne fletcher", "año": 2009}
-    ]
+    "Historia": []
 }
 
+# ------------------ FUNCIONES CRUD ------------------
+# Mostrar todos los libros
 def mostrar_biblioteca():
-    for genero, peliculas in biblioteca.items():
-        print(f"\n======genero: {genero}======")
-        for pelicula in peliculas:
-            print(f"titulo: {pelicula['titulo']}, director: {pelicula['director']}, año: {pelicula['año']}")
-          
-def agregar_pelicula(genero, titulo, director, año):
-    if genero not in biblioteca: 
-            biblioteca[genero] = []
-    biblioteca[genero].append({"titulo": titulo, "director": director, "año": año})  
-    print(f"pelicula {titulo} agregada al genero {genero}")
+    for seccion, libros in biblioteca.items():
+        print(f"\n=== Sección: {seccion} ===")
+        if not libros:
+            print("  (Vacía)")
+        else:
+            for libro in libros:
+                print(f"  Título: {libro['titulo']}, Autor: {libro['autor']}, Año: {libro['anio']}")
 
-def buscar_pelicula(titulo): 
-    for genero, peliculas in biblioteca.items():
-          for peliculas in peliculas:    
-               if peliculas['titulo'].lower() == titulo.lower():
-                   return peliculas, genero 
-    return None, None 
+# Agregar libro
+def agregar_libro(seccion, titulo, autor, anio):
+    if seccion not in biblioteca:
+        biblioteca[seccion] = []
+    biblioteca[seccion].append({"titulo": titulo, "autor": autor, "anio": anio})
+    print(f"Libro '{titulo}' agregado a la sección '{seccion}'\n")
 
-def eliminar_pelicula(titulo):
-     pelicula, genero = buscar_pelicula(titulo)
-     if pelicula:
-          biblioteca[genero].remove(pelicula)
-          print(f"pelicula {titulo} eliminada del genero {genero}")
-          return True
-     else:
-          print("pelicula no encontrada")
-          return False
-     
-def eliminar_genero(genero):
-     genero = genero.strip().lower()
-    
-     if genero in biblioteca:
-        del biblioteca[genero]
-        print(f"Género '{genero}' eliminado correctamente")
+# Buscar libro
+def buscar_libro(titulo):
+    for seccion, libros in biblioteca.items():
+        for libro in libros:
+            if libro["titulo"].lower() == titulo.lower():
+                return libro, seccion
+    return None, None
+
+# Actualizar libro
+def actualizar_libro(titulo, nuevo_titulo=None, nuevo_autor=None, nuevo_anio=None):
+    libro, seccion = buscar_libro(titulo)
+    if libro:
+        if nuevo_titulo:
+            libro["titulo"] = nuevo_titulo
+        if nuevo_autor:
+            libro["autor"] = nuevo_autor
+        if nuevo_anio:
+            libro["anio"] = nuevo_anio
+        print(f"Libro '{titulo}' actualizado en la sección '{seccion}'\n")
         return True
-     else:
-        print("Género no encontrado")
-        return False
-     
+    print("Libro no encontrado.\n")
+    return False
+
+# Eliminar libro
+def eliminar_libro(titulo):
+    libro, seccion = buscar_libro(titulo)
+    if libro:
+        biblioteca[seccion].remove(libro)
+        print(f"Libro '{titulo}' eliminado de la sección '{seccion}'\n")
+        return True
+    print("Libro no encontrado.\n")
+    return False
+
+# ------------------ MENÚ PRINCIPAL ------------------
 def menu():
     opcion = ""
     while opcion != "6":
         print("\n=== MENÚ BIBLIOTECA ===")
-        print("1. Mostrar biblioteca ")
-        print("2. Agregar pelicula ")
-        print("3. Buscar pelicula")
-        print("4. Eliminar pelicula")
-        print("5. Eliminar género")
+        print("1. Agregar libro")
+        print("2. Mostrar biblioteca")
+        print("3. Buscar libro")
+        print("4. Actualizar libro")
+        print("5. Eliminar libro")
         print("6. Salir")
-        opcion = input("seleccione una opcion: ")
+
+        opcion = input("Seleccione una opción: ")
+
         if opcion == "1":
-            mostrar_biblioteca()
+            seccion = input("Sección: ")
+            titulo = input("Título: ")
+            autor = input("Autor: ")
+            anio = int(input("Año: "))
+            agregar_libro(seccion, titulo, autor, anio)
+
         elif opcion == "2":
-            genero = input("genero: " )
-            titulo = input("titulo: ")
-            director = input("director: ")
-            año = int(input("año: "))
-            agregar_pelicula(genero, titulo, director, año)
-        elif opcion == "3": 
+            mostrar_biblioteca()
+
+        elif opcion == "3":
             titulo = input("Título a buscar: ")
-            pelicula, genero = buscar_pelicula(titulo)
-            if pelicula:
-                print(f"Encontrado: {pelicula} en sección '{genero}'\n")
+            libro, seccion = buscar_libro(titulo)
+            if libro:
+                print(f"Encontrado: {libro} en sección '{seccion}'\n")
             else:
-                print("pelicula no encontrado.\n")
-        elif opcion  == "4":
-            titulo = input("titulo a eliminar: ")
-            eliminar_pelicula(titulo)
+                print("Libro no encontrado.\n")
+
+        elif opcion == "4":
+            titulo = input("Título del libro a actualizar: ")
+            nuevo_titulo = input("Nuevo título (enter para omitir): ")
+            nuevo_autor = input("Nuevo autor (enter para omitir): ")
+            nuevo_anio = input("Nuevo año (enter para omitir): ")
+            nuevo_anio = int(nuevo_anio) if nuevo_anio else None
+            actualizar_libro(titulo, nuevo_titulo or None, nuevo_autor or None, nuevo_anio)
+
         elif opcion == "5":
-             genero = input("Género a eliminar: ")
-             eliminar_genero(genero)
+            titulo = input("Título del libro a eliminar: ")
+            eliminar_libro(titulo)
+
         elif opcion == "6":
-            print("saliendo.......")
+            print("Saliendo...")
+
+        else:
+            print("Opción inválida\n")
+
+# Ejecutar menú
 menu()

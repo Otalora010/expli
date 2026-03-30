@@ -1,116 +1,91 @@
-cursos = {
-    "programacion": [
-        {"nombre": "python basico", "instructor": "juan perez", "duracion": 20},
-        {"nombre": "javascript", "instructor": "ana lopez", "duracion": 15}
+
+biblioteca = {
+    "accion": [
+        {"titulo": "rapidos y furioso 1", "director": "rob cohen", "año": 2001 },
+        {"titulo": "jhon wick", "director": "chad stahelski", "año":2014 }
     ],
-    "diseno": [
-        {"nombre": "photoshop", "instructor": "carlos ruiz", "duracion": 10}
+    "ciencia ficcion": [
+        {"titulo": "mad max fury road", "director": "george miller", "año": 2015 },
+        {"titulo": "intelestellar", "director": "christopher nolan", "año": 2014 }
+    ],
+    "amor": [
+        {"titulo": "como perder a un hombre en 10 dias", "director": "donald peterson", "año": 2003 },
+        {"titulo": "la propuesta", "director": "anne fletcher", "año": 2009}
     ]
 }
 
-# ---------------- MOSTRAR ----------------
-def mostrar_cursos():
-    for categoria, lista_cursos in cursos.items():
-        print(f"\n====== CATEGORIA: {categoria} ======")
-        for curso in lista_cursos:
-            print(f"Curso: {curso['nombre']}, Instructor: {curso['instructor']}, Duración: {curso['duracion']} horas")
+def mostrar_biblioteca():
+    for genero, peliculas in biblioteca.items():
+        print(f"\n======genero: {genero}======")
+        for pelicula in peliculas:
+            print(f"titulo: {pelicula['titulo']}, director: {pelicula['director']}, año: {pelicula['año']}")
+          
+def agregar_pelicula(genero, titulo, director, año):
+    if genero not in biblioteca: 
+            biblioteca[genero] = []
+    biblioteca[genero].append({"titulo": titulo, "director": director, "año": año})  
+    print(f"pelicula {titulo} agregada al genero {genero}")
 
+def buscar_pelicula(titulo): 
+    for genero, peliculas in biblioteca.items():
+          for peliculas in peliculas:    
+               if peliculas['titulo'].lower() == titulo.lower():
+                   return peliculas, genero 
+    return None, None 
 
-# ---------------- AGREGAR ----------------
-def agregar_curso(categoria, nombre, instructor, duracion):
-    categoria = categoria.strip().lower()
+def eliminar_pelicula(titulo):
+     pelicula, genero = buscar_pelicula(titulo)
+     if pelicula:
+          biblioteca[genero].remove(pelicula)
+          print(f"pelicula {titulo} eliminada del genero {genero}")
+          return True
+     else:
+          print("pelicula no encontrada")
+          return False
+     
+def eliminar_genero(genero):
+     genero = genero.strip().lower()
     
-    if categoria not in cursos:
-        cursos[categoria] = []
-    
-    cursos[categoria].append({
-        "nombre": nombre,
-        "instructor": instructor,
-        "duracion": duracion
-    })
-    
-    print(f"Curso '{nombre}' agregado a {categoria}")
-
-
-# ---------------- BUSCAR ----------------
-def buscar_curso(nombre):
-    nombre = nombre.strip().lower()
-    
-    for categoria, lista_cursos in cursos.items():
-        for curso in lista_cursos:
-            if curso["nombre"].lower() == nombre:
-                return curso, categoria
-    
-    return None, None
-
-
-# ---------------- ELIMINAR CURSO ----------------
-def eliminar_curso(nombre):
-    curso, categoria = buscar_curso(nombre)
-    
-    if curso:
-        cursos[categoria].remove(curso)
-        print(f"Curso eliminado de {categoria}")
-    else:
-        print("Curso no encontrado")
-
-
-# ---------------- ELIMINAR CATEGORIA ----------------
-def eliminar_categoria(categoria):
-    categoria = categoria.strip().lower()
-    
-    if categoria in cursos:
-        del cursos[categoria]
-        print(f"Categoría '{categoria}' eliminada")
-    else:
-        print("Categoría no encontrada")
-
-
-# ---------------- MENU ----------------
+     if genero in biblioteca:
+        del biblioteca[genero]
+        print(f"Género '{genero}' eliminado correctamente")
+        return True
+     else:
+        print("Género no encontrado")
+        return False
+     
 def menu():
     opcion = ""
-    
     while opcion != "6":
-        print("\n=== MENÚ CURSOS ===")
-        print("1. Mostrar cursos")
-        print("2. Agregar curso")
-        print("3. Buscar curso")
-        print("4. Eliminar curso")
-        print("5. Eliminar categoría")
+        print("\n=== MENÚ BIBLIOTECA ===")
+        print("1. Mostrar biblioteca ")
+        print("2. Agregar pelicula ")
+        print("3. Buscar pelicula")
+        print("4. Eliminar pelicula")
+        print("5. Eliminar género")
         print("6. Salir")
-        
-        opcion = input("Seleccione una opción: ")
-        
+        opcion = input("seleccione una opcion: ")
         if opcion == "1":
-            mostrar_cursos()
-        
+            mostrar_biblioteca()
         elif opcion == "2":
-            categoria = input("Categoría: ")
-            nombre = input("Nombre del curso: ")
-            instructor = input("Instructor: ")
-            duracion = int(input("Duración (horas): "))
-            
-            agregar_curso(categoria, nombre, instructor, duracion)
-        
-        elif opcion == "3":
-            nombre = input("Curso a buscar: ")
-            curso, categoria = buscar_curso(nombre)
-            
-            if curso:
-                print(f"Encontrado: {curso} en '{categoria}'")
+            genero = input("genero: " )
+            titulo = input("titulo: ")
+            director = input("director: ")
+            año = int(input("año: "))
+            agregar_pelicula(genero, titulo, director, año)
+        elif opcion == "3": 
+            titulo = input("Título a buscar: ")
+            pelicula, genero = buscar_pelicula(titulo)
+            if pelicula:
+                print(f"Encontrado: {pelicula} en sección '{genero}'\n")
             else:
-                print("Curso no encontrado")
-        
-        elif opcion == "4":
-            nombre = input("Curso a eliminar: ")
-            eliminar_curso(nombre)
-        
+                print("pelicula no encontrado.\n")
+        elif opcion  == "4":
+            titulo = input("titulo a eliminar: ")
+            eliminar_pelicula(titulo)
         elif opcion == "5":
-            categoria = input("Categoría a eliminar: ")
-            eliminar_categoria(categoria)
-        
+             genero = input("Género a eliminar: ")
+             eliminar_genero(genero)
         elif opcion == "6":
-            print("Saliendo...")
-
-
+            print("saliendo.......")
 menu()
